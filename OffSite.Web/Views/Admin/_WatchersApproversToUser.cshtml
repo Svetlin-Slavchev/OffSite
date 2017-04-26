@@ -1,0 +1,76 @@
+﻿@model WatchersApproversToUserViewModel
+@{
+    IList<ApplicationUser> allUsers = ViewData["AllUsers"] as IList<ApplicationUser>;
+    IList<ApplicationUser> watchers = ViewData["Watchers"] as IList<ApplicationUser>;
+    IList<ApplicationUser> approvers = ViewData["Approvers"] as IList<ApplicationUser>;
+}
+
+@if (allUsers != null)
+{
+    <div class="row no-gutter create-section">
+        <div class="container-fluid">
+            <div class="col-md-4 col-sm-6 col-xs-12 card">
+                <form asp-controller="Admin" asp-action="WatchersApproversToUser" method="post">
+                    <div class="col-md-12 form-horizontal">
+                        <h4>Add Watchers/Approvers to user</h4>
+                        <hr />
+                        <div class="row no-gutter">
+                            <div class="form-group">
+                                <label asp-for="UserId" class="control-label">Select user</label>
+                                <div class="input-group">
+                                    <select asp-for="UserId" class="selectpicker">
+                                        <option value="">Select one</option>
+                                        @foreach (ApplicationUser item in allUsers)
+                                        {
+                                            <option value="@item.Id">@item.UserName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="UserId" class="text-danger" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutter">
+                            <div class="form-group">
+                                <label asp-for="WatchersId" class="control-label">Select watcher for this user</label>
+                                <div class="input-group">
+                                    <select asp-for="WatchersId" class="selectpicker" multiple>
+                                        @foreach (ApplicationUser item in watchers)
+                                        {
+                                            <option value="@item.Id">@item.UserName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="WatchersId" class="text-danger" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutter">
+                            <div class="form-group">
+                                <label asp-for="ApproversId" class="control-label">Select approver for this user</label>
+                                <div class="input-group">
+                                    <select asp-for="ApproversId" class="selectpicker" multiple>
+                                        @foreach (ApplicationUser item in approvers)
+                                        {
+                                            <option value="@item.Id">@item.UserName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ApproversId" class="text-danger" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group submit-btn">
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-info btn-fill btn-wd">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

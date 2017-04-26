@@ -1,0 +1,87 @@
+@model IEnumerable<OffSiteRequestViewModel>
+@{
+    ViewData["Title"] = "Off.Site requests";
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header" data-background-color="orange">
+                        <h4 class="title">Off.Site requests</h4>
+                    </div>
+                    <div class="card-content table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CreatedDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.StartDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EndDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Reason)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.SelectedStatusName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Approved)
+                                    </th>
+                                    @if (ViewBag.IsAdmin)
+                                    {
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.UserName)
+                                        </th>
+                                        <th></th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.CreatedDate.ToString("dd.MM.yyyy")
+                                        </td>
+                                        <td>
+                                            @item.StartDate
+                                        </td>
+                                        <td>
+                                            @item.EndDate
+                                        </td>
+                                        <td>
+                                            @item.Reason
+                                        </td>
+                                        <td>
+                                            @item.SelectedStatusName
+                                        </td>
+                                        <td>
+                                            @item.Approved
+                                        </td>
+                                        @if (ViewBag.IsAdmin)
+                                        {
+                                            <td>
+                                                @item.UserName
+                                            </td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">store</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Paid days off</p>
+                        <h3 class="title">@Model.RemainingPaidDaysOff<small>days</small></h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">date_range</i><a asp-controller="OffSiteRequests" asp-action="Create">Make request</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">content_copy</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">My watchers/Approvers</p>
+                        @foreach (var item in Model.ApproversAndWatchers)
+                        {
+                            <h6 class="title">
+                                @item.Name :
+                                @foreach (var role in item.RoleName)
+                                {
+                                    <small>@role</small>
+                                }
+                            </h6>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons text-center"></i> <a href="#">Todo?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-content">
+                        <h4 class="title">Calendar</h4>
+                        <div id="calendar"></div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="chart-legend">
+                            <i class="fa fa-circle color-vacation-paid"></i> Vacation-paid
+                            <i class="fa fa-circle color-vacation-non-paid"></i> Vacation-non paid
+                            <i class="fa fa-circle color-sick-leave"></i> Sick leave
+                            <i class="fa fa-circle color-work-form-home"></i> Work form home
+                            <i class="fa fa-circle color-running-late"></i> Running late
+                            <i class="fa fa-circle color-shift-working-late"></i> Shift working late
+                            <i class="fa fa-circle color-other"></i> Other
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on('ready', function () {
+
+        $('#calendar').fullCalendar({
+            events: function (start, end, timezone, callback) {
+                $.ajax({
+                    url: '/Home/GetCalendarData',
+                    dataType: 'json',
+                    success: function (data) {
+                        var events = [];
+
+                        for (var i = 0; i < Object.keys(data).length; i++) {
+
+                            var pesho = {
+                                title: data[i].title,
+                                start: data[i].start,
+                                end: data[i].end,
+                                color: data[i].color
+                            };
+                            events.push(pesho);
+                        }
+
+                        callback(events);
+                    }
+                });
+            }
+        });
+    })
+</script>

@@ -1,0 +1,79 @@
+@model IEnumerable<NotificationMessageViewModel>
+@{
+    ViewData["Title"] = "All Notifications";
+    bool IsInAdminRole = Convert.ToBoolean(ViewData[Constants.Global.IsCurrentUserIsInAdminRole]);
+}
+
+<h2>All Notifications</h2>
+<p>Todo - sorting?</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                StartDate
+            </th>
+            <th>
+                EndDate
+            </th>
+            <th>
+                Reason
+            </th>
+            <th>
+                DaysOff
+            </th>
+            <th>
+                Approved
+            </th>
+            <th>
+                Approved Done
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.SelectedUser.Name
+                </td>
+                <td>
+                    @item.SiteOffRequest.SelectedStatusName
+                </td>
+                <td>
+                    @item.SiteOffRequest.StartDate
+                </td>
+                <td>
+                    @item.SiteOffRequest.EndDate
+                </td>
+                <td>
+                    @item.SiteOffRequest.Reason
+                </td>
+                <td>
+                    @item.DaysOff
+                </td>
+                <td>
+                    @item.Approved
+                </td>
+                <td>
+                    @item.ApprovedDone
+                </td>
+                @if (IsInAdminRole)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

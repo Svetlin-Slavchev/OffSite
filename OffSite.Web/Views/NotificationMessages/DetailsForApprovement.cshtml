@@ -1,0 +1,76 @@
+@model NotificationMessageViewModel
+@{
+    ViewData["Title"] = "Off.Site Request Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Off.Site Request</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            User name
+        </dt>
+        <dd>
+            @Model.SelectedUser.Name
+        </dd>
+        <dt>
+            Request status
+        </dt>
+        <dd>
+            @Model.SiteOffRequest.SelectedStatusName
+        </dd>
+        <dt>
+            From date
+        </dt>
+        <dd>
+            @Model.SiteOffRequest.StartDate
+        </dd>
+        <dt>
+            To date
+        </dt>
+        <dd>
+            @Model.SiteOffRequest.EndDate
+        </dd>
+        <dt>
+            Days
+        </dt>
+        <dd>
+            @Model.DaysOff
+            </dd>
+            <dt>
+                Reason
+            </dt>
+            <dd>
+                @Model.SiteOffRequest.Reason
+            </dd>
+        </dl>
+        <form asp-action="DetailsForApprovement">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input id="btn-approve" type="submit" value="Approve" class="btn btn-success" />
+                        <input id="btn-reject" type="submit" value="Reject" class="btn btn-danger" />
+                    </div>
+                </div>
+            </div>
+
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.Approved)
+        </form>
+    </div>
+    <div>
+        <a class="btn btn-default" asp-action="Index">Back to List</a>
+    </div>
+
+<script>
+    $(document).on("click", "#btn-approve", function () {
+        $('#Approved').val(true);
+    });
+
+    $(document).on("click", "#btn-reject", function () {
+        $('#Approved').val(false);
+    });
+
+</script>

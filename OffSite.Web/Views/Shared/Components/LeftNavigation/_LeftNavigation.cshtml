@@ -1,0 +1,48 @@
+﻿@model LeftNavigationViewComponentModel
+
+<div class="sidebar-wrapper">
+    <ul class="nav">
+        <li>
+            <a asp-controller="Home" asp-action="Index">
+                <i class="material-icons">dashboard</i>
+                <p>Dashboard</p>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Manage" asp-action="Index">
+                <i class="material-icons">person</i>
+                <p>User Profile</p>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="OffSiteRequests" asp-action="Create">
+                <i class="material-icons">bubble_chart</i>
+                <p>Create OffSite request</p>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="NotificationMessages" asp-action="Index">
+                <i class="material-icons text-gray">notifications</i>
+                <p>Notifications</p>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="OffSiteRequests" asp-action="Index">
+                <i class="material-icons">library_books</i>
+                <p>Requests</p>
+            </a>
+        </li>
+        @if (Model.CurrentUser != null)
+        {
+            if (Model.IsAdmin)
+            {
+                <li>
+                    <a asp-controller="Admin" asp-action="Index">
+                        <i class="material-icons">unarchive</i>
+                        <p>Manage users/roles</p>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</div>

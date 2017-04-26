@@ -1,0 +1,34 @@
+﻿@using OffSite.Data.ViewModels
+@{
+    ViewData["Title"] = "Admin panel";
+    var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList();
+}
+
+<h2>Admin panel</h2>
+
+@if (errors.Count > 0)
+{
+    @foreach (var item in errors)
+    {
+        <h4>@item.Key - @item.Value.Errors.FirstOrDefault().ErrorMessage</h4>
+        <a class="btn btn-primary" asp-action="Index">Back</a>
+    }
+}
+else
+{
+    <p>
+        <a class="btn btn-primary" data-toggle="collapse" href="#add-user-to-role" aria-expanded="false" aria-controls="collapseExample">
+            Add user to role
+        </a>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-watchers-approvers-to-user" aria-expanded="false" aria-controls="collapseExample">
+            Add Watchers/Approvers to user
+        </button>
+    </p>
+    <div class="collapse" id="add-user-to-role">
+        @Html.Partial("_UserToRole", new UserToRoleViewModel())
+    </div>
+    <div class="collapse" id="add-watchers-approvers-to-user">
+        @Html.Partial("_WatchersApproversToUser", new WatchersApproversToUserViewModel())
+    </div>
+}
+

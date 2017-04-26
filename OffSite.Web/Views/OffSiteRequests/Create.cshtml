@@ -1,0 +1,154 @@
+@model OffSiteRequestViewModel
+@{
+    ViewData["Title"] = "Create";
+    IList<OffSiteStatus> allRequestStatuses = ViewData["RequestStatus"] as IList<OffSiteStatus>;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header" data-background-color="orange">
+                        <h4 class="title">Make Off.Site request</h4>
+                    </div>
+                    <div class="card-content">
+                        <form asp-controller="OffSiteRequests" asp-action="Create" method="post">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group label-floating">
+                                        <div class="input-group">
+                                            <select asp-for="SelectedVacationStatusId" class="selectpicker form-control">
+                                                <option value="">Select one</option>
+                                                @foreach (OffSiteStatus item in allRequestStatuses)
+                                                {
+                                                    <option value="@item.Id">@item.Name</option>
+                                                }
+                                            </select>
+                                            <span asp-validation-for="SelectedVacationStatusId" class="text-danger" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group label-floating">
+                                        <label asp-for="StartDate" class="control-label"></label>
+                                        <div id="datetimepicker6" class="input-group date pesho">
+                                            <input asp-for="StartDate" type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                            <span asp-validation-for="StartDate" class="text-danger error-text" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="end-date-picker" class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group label-floating">
+                                        <label asp-for="EndDate" class="control-label"></label>
+                                        <div id="datetimepicker7" class="input-group date pesho">
+                                            <input asp-for="EndDate" type='text' class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                            <span asp-validation-for="EndDate" class="text-danger error-text" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="take-half-a-day" class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group label-floating">
+                                        <div class="checkbox">
+                                            <label asp-for="TakeHalfADay">
+                                                <input asp-for="TakeHalfADay" />
+                                                @Html.DisplayNameFor(m => m.TakeHalfADay)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group label-floating">
+                                        <label asp-for="Reason" class="control-label"></label>
+                                        <div class="input-group">
+                                            <textarea asp-for="Reason" class="col-md-12 form-control" rows="5"></textarea>
+                                            <span asp-validation-for="Reason" class="text-danger" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group submit-btn label-floating">
+                                        <div class="text-center">
+                                            @*<input type="submit" value="Create" class="btn btn-default" />*@
+                                            <button type="submit" class="btn btn-success btn-fill btn-wd">Create</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#take-half-a-day").hide();
+
+    $(function () {
+        $('.datetimepicker').datetimepicker();
+    });
+
+    $(function () {
+        $('#datetimepicker6').datetimepicker();
+        $('#datetimepicker7').datetimepicker({
+            useCurrent: false //Important! See issue #1075
+        });
+        $("#datetimepicker6").on("dp.change", function (e) {
+            $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+
+            if (e.oldDate === null) {
+                $(this).data('DateTimePicker').date(new Date(e.date._d.setHours(9, 00, 00)));
+            }
+        });
+        $("#datetimepicker7").on("dp.change", function (e) {
+            $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+
+            if (e.oldDate === null) {
+                $(this).data('DateTimePicker').date(new Date(e.date._d.setHours(18, 00, 00)));
+            }
+        });
+    });
+
+    // Status drop down change.
+    $("#SelectedVacationStatusId").change(function () {
+        var ddValue = $("#SelectedVacationStatusId option:selected").text();
+
+        if (ddValue == "Vacation - paid" || ddValue == "Vacation - non paid") {
+            $("#take-half-a-day").show();
+        } else {
+            $("#take-half-a-day").hide();
+        }
+    });
+
+    $("#take-half-a-day").change(function () {
+        var isHidden = $("#end-date-picker").is(':hidden');
+
+        if (isHidden) {
+            $("#end-date-picker").show();
+        } else {
+            $("#end-date-picker").hide();
+        }
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
