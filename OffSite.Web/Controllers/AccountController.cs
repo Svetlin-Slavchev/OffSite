@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -22,13 +23,15 @@ namespace OffSite.Web.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHostingEnvironment _environment;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILoggerFactory loggerFactory,
-            RoleManager<IdentityRole> roleManager) 
+            RoleManager<IdentityRole> roleManager,
+            IHostingEnvironment environment) 
             : base(userManager)
         {
             _userManager = userManager;
@@ -36,6 +39,7 @@ namespace OffSite.Web.Controllers
             _emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _roleManager = roleManager;
+            _environment = environment;
         }
 
         //
@@ -106,7 +110,10 @@ namespace OffSite.Web.Controllers
                 if (result.Succeeded)
                 {
                     // Add user to admin role.
-                    await _userManager.AddToRoleAsync(user, Constants.Roles.AdminRole);
+                    if (_environment.IsDevelopment())
+                    {
+                        await _userManager.AddToRoleAsync(user, Constants.Roles.AdminRole);
+                    }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");

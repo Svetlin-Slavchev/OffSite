@@ -66,7 +66,7 @@ namespace OffSite.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -76,6 +76,8 @@ namespace OffSite.Web
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
+
+                DbContextExtensions.Seed(app, dbContext);
             }
             else
             {
@@ -95,8 +97,6 @@ namespace OffSite.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            DbContextExtensions.Seed(app);
         }
     }
 }

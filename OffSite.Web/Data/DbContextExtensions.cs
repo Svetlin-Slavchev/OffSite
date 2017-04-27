@@ -10,48 +10,45 @@ using System.Linq;
 
 namespace OffSite.Web.Data
 {
-    public static class DbContextExtensions
+    public class DbContextExtensions
     {
-        public static void Seed(IApplicationBuilder app)
+        public static void Seed(IApplicationBuilder app, ApplicationDbContext dbContext)
         {
-            using (var dbContext = app.ApplicationServices.GetRequiredService<ApplicationDbContext>())
-            {
-                // Create roles.
-                DbContextExtensions.CreateRoles(app);
+            // Initial admin user.
+            //this.CreateAdminUser(app);
 
-                // Initial admin user.
-                DbContextExtensions.CreateAdminUser(app);
+            // Create SiteOffStatuses.
+            DbContextExtensions.CreateOffSiteStatuses(app, dbContext);
 
-                // Create SiteOffStatuses.
-                DbContextExtensions.CreateOffSiteStatuses(app);
-            }
+            // Create roles.
+            DbContextExtensions.CreateRoles(app);
         }
 
-        private static void CreateRoles(IApplicationBuilder app)
+        public static async void CreateRoles(IApplicationBuilder app)
         {
             using (var roleManager = app.ApplicationServices.GetRequiredService<RoleManager<IdentityRole>>())
             {
                 IdentityRole newRole;
-                if (!roleManager.RoleExistsAsync(Constants.Roles.UserRole).Result)
+                if (!await roleManager.RoleExistsAsync(Constants.Roles.UserRole))
                 {
                     // Assume if we donot have UserRole, we donot nave any roles.
                     // Create the roles.
                     newRole = new IdentityRole(Constants.Roles.UserRole);
-                    roleManager.CreateAsync(newRole);
+                    await roleManager.CreateAsync(newRole);
 
                     newRole = new IdentityRole(Constants.Roles.AdminRole);
-                    roleManager.CreateAsync(newRole);
+                    await roleManager.CreateAsync(newRole);
 
                     newRole = new IdentityRole(Constants.Roles.WatcherRole);
-                    roleManager.CreateAsync(newRole);
+                    await roleManager.CreateAsync(newRole);
 
                     newRole = new IdentityRole(Constants.Roles.ApproverRole);
-                    roleManager.CreateAsync(newRole);
+                    await roleManager.CreateAsync(newRole);
                 }
             }
         }
 
-        private static void CreateAdminUser(IApplicationBuilder app)
+        public static void CreateAdminUser(IApplicationBuilder app)
         {
             using (var userManager = app.ApplicationServices.GetRequiredService<UserManager<ApplicationUser>>())
             {
@@ -75,13 +72,11 @@ namespace OffSite.Web.Data
             }
         }
 
-        private static void CreateOffSiteStatuses(IApplicationBuilder app)
+        public static void CreateOffSiteStatuses(IApplicationBuilder app, ApplicationDbContext dbContext)
         {
-            using (var dbContext = app.ApplicationServices.GetRequiredService<ApplicationDbContext>())
+            if (!dbContext.OffSiteStatuses.Any())
             {
-                if (!dbContext.OffSiteStatuses.Any())
-                {
-                    var offSiteRequests = new List<OffSiteStatus>()
+                var offSiteRequests = new List<OffSiteStatus>()
                     {
                         new OffSiteStatus() { Name = Constants.Global.PaidVacationName },
                         new OffSiteStatus() { Name = Constants.Global.NonPaidVacationName },
@@ -91,9 +86,8 @@ namespace OffSite.Web.Data
                         new OffSiteStatus() { Name = "Other" }
                     };
 
-                    dbContext.OffSiteStatuses.AddRange(offSiteRequests);
-                    dbContext.SaveChanges();
-                }
+                dbContext.OffSiteStatuses.AddRange(offSiteRequests);
+                dbContext.SaveChanges();
             }
         }
     }
